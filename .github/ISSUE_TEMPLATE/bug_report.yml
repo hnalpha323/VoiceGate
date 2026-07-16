@@ -1,0 +1,68 @@
+name: Bug report
+description: Something doesn't work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you get instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Enrolled my voice (self-similarity 0.62)
+        2. Set mode to Strict, threshold 0.44
+        3. Started, spoke into the mic
+        4. Gate never opened
+    validations:
+      required: true
+
+  - type: input
+    id: mic
+    attributes:
+      label: Microphone
+      description: Make and model, and how it's connected (USB, 3.5 mm, Bluetooth, interface).
+      placeholder: Blue Yeti (USB)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Gate mode
+      options: [VAD only, Balanced, Strict]
+    validations:
+      required: true
+
+  - type: textarea
+    id: state
+    attributes:
+      label: What the live panel showed
+      description: >
+        The Voice match score, whether "Speech detected" lit up, whether the gate opened,
+        and the output buffer reading. This is usually enough to pinpoint the stage that failed.
+      placeholder: |
+        Mic in: moving. Speech detected: green. Voice match: 0.31 (threshold 0.44). Gate: closed.
+
+  - type: input
+    id: version
+    attributes:
+      label: VoiceGate version / commit
+      placeholder: v1.0.0 or commit sha
+
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 23H2
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Error messages, whether exclusive mode was on, other audio software running (VoiceMeeter, NVIDIA Broadcast, OBS).

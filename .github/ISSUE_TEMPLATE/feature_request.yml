@@ -1,0 +1,24 @@
+name: Feature request
+description: Suggest an improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the situation you're in, not just the feature you want.
+      placeholder: My partner works in the same room and joins my calls by accident when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should VoiceGate do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered

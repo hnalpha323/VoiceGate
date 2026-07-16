@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Setup help (VB-Cable, Discord, models)
+    url: https://github.com/hnalpha323/VoiceGate#quick-start
+    about: Most setup problems are answered by the Quick start and Troubleshooting sections.

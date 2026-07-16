@@ -1,0 +1,40 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+dist/
+publish/
+artifacts/
+*.binlog
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+coverage*.json
+coverage*.xml
+*.opencover.xml
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.sln.docstates
+*.DotSettings.user
+
+# Local tooling / agent state
+.claude/
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Runtime data (models and profiles live in %APPDATA%\VoiceGate, never in the repo)
+*.onnx
+*.onnx.download
+profile.json
+settings.json
+!.vscode/settings.json

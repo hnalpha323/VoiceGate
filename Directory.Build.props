@@ -1,0 +1,25 @@
+<Project>
+
+  <!-- Settings shared by every project in the repo. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <Deterministic>true</Deterministic>
+    <!-- Needed for IDE0005 (unused usings) to run during build. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- CA1416: the whole app is Windows-only by design. CS1591: XML docs are not required. -->
+    <NoWarn>$(NoWarn);CA1416;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>VoiceGate contributors</Authors>
+    <Product>VoiceGate</Product>
+    <Copyright>Copyright (c) 2026 VoiceGate contributors</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+</Project>

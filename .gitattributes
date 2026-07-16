@@ -1,0 +1,23 @@
+# Normalize to LF in the repository; check out with native line endings.
+* text=auto
+
+*.cs      text diff=csharp
+*.xaml    text
+*.csproj  text
+*.props   text
+*.sln     text eol=crlf
+*.ps1     text eol=crlf
+*.cmd     text eol=crlf
+*.sh      text eol=lf
+*.md      text
+*.yml     text
+*.json    text
+*.manifest text
+
+# Never touch these
+*.onnx    binary
+*.png     binary
+*.jpg     binary
+*.ico     binary
+*.dll     binary
+*.exe     binary

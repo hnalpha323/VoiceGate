@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & test (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore VoiceGate.sln
+
+      - name: Build
+        run: dotnet build VoiceGate.sln -c Release --no-restore
+
+      - name: Test
+        run: dotnet test VoiceGate.sln -c Release --no-build --verbosity normal
+
+      - name: Verify formatting
+        run: dotnet format VoiceGate.sln --verify-no-changes --severity warn
+
+      - name: Publish
+        run: dotnet publish src/VoiceGate/VoiceGate.csproj -c Release -r win-x64 --no-self-contained -o dist
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiceGate-win-x64
+          path: dist/
+          retention-days: 14
