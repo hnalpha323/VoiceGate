@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace VoiceGate.Models;
 
 public sealed record ModelInfo(string Key, string FileName, string Url, long SizeBytes, string Description);

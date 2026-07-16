@@ -1,6 +1,3 @@
-using System.IO;
-using System.Net.Http;
-
 namespace VoiceGate.Models;
 
 /// <summary>Downloads model files with progress reporting; writes to a temp file then moves into place.</summary>
@@ -29,21 +26,24 @@ public static class ModelDownloader
         long total = response.Content.Headers.ContentLength ?? model.SizeBytes;
         try
         {
-            await using (Stream source = await response.Content.ReadAsStreamAsync(ct))
-            await using (FileStream dest = File.Create(temp))
+            // The stream/array overloads below are the ones netstandard2.0 also has.
+            using (Stream source = await response.Content.ReadAsStreamAsync())
+            using (FileStream dest = File.Create(temp))
             {
                 var buffer = new byte[81920];
                 long done = 0;
                 int read;
-                while ((read = await source.ReadAsync(buffer, ct)) > 0)
+                while ((read = await source.ReadAsync(buffer, 0, buffer.Length, ct)) > 0)
                 {
-                    await dest.WriteAsync(buffer.AsMemory(0, read), ct);
+                    await dest.WriteAsync(buffer, 0, read, ct);
                     done += read;
                     if (total > 0)
                         progress.Report(Math.Min(1.0, (double)done / total));
                 }
             }
-            File.Move(temp, target, overwrite: true);
+            if (File.Exists(target))
+                File.Delete(target);
+            File.Move(temp, target);
         }
         catch
         {

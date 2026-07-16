@@ -33,7 +33,8 @@ public sealed class SpeakerVerifier : IDisposable
     {
         lock (_lock)
         {
-            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (_disposed)
+                throw new ObjectDisposedException(nameof(SpeakerVerifier));
             using OnlineStream stream = _extractor.CreateStream();
             stream.AcceptWaveform(SampleRate, samples16k);
             stream.InputFinished();

@@ -77,11 +77,11 @@ public sealed class SpectralDenoiser : IDenoiser
     {
         _inFifo.Clear();
         _outFifo.Clear();
-        Array.Clear(_analysis);
-        Array.Clear(_ola);
-        Array.Clear(_noise);
-        Array.Clear(_prevSnr);
-        Array.Clear(_prevGain2);
+        Array.Clear(_analysis, 0, _analysis.Length);
+        Array.Clear(_ola, 0, _ola.Length);
+        Array.Clear(_noise, 0, _noise.Length);
+        Array.Clear(_prevSnr, 0, _prevSnr.Length);
+        Array.Clear(_prevGain2, 0, _prevGain2.Length);
         _framesProcessed = 0;
         // Prime the output so sample counts stay 1:1 with a fixed latency.
         _outFifo.Write(new float[FftSize - Hop]);
@@ -100,7 +100,7 @@ public sealed class SpectralDenoiser : IDenoiser
         int got = _outFifo.Read(frame);
         // By construction the FIFO always holds enough; zero-fill defensively if not.
         if (got < frame.Length)
-            frame[got..].Clear();
+            frame.Slice(got).Clear();
     }
 
     private void ProcessFrame()
@@ -135,12 +135,12 @@ public sealed class SpectralDenoiser : IDenoiser
 
             float snrPost = p / (n + Eps);
             float prio = DdAlpha * _prevGain2[k] * _prevSnr[k]
-                       + (1f - DdAlpha) * MathF.Max(snrPost - 1f, 0f);
+                       + (1f - DdAlpha) * Math.Max(snrPost - 1f, 0f);
             _gain[k] = prio / (1f + prio);
             _prevSnr[k] = snrPost;
         }
 
-        float gMin = MathF.Pow(10f, -ReductionDb / 20f);
+        float gMin = (float)Math.Pow(10.0, -ReductionDb / 20.0);
         bool bypass = Bypass;
         for (int k = 0; k <= half; k++)
         {
@@ -154,7 +154,7 @@ public sealed class SpectralDenoiser : IDenoiser
                 g = _gain[k];
                 if (k > 0 && k < half)
                     g = 0.25f * _gain[k - 1] + 0.5f * _gain[k] + 0.25f * _gain[k + 1];
-                g = MathF.Max(g, gMin);
+                g = Math.Max(g, gMin);
             }
             _prevGain2[k] = g * g;
 

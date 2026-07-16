@@ -145,11 +145,13 @@ flag, which is the point of the fast/slow split.
 
 ## Project layout
 
+The code is split by portability. Everything that does not touch a Windows API lives in
+**VoiceGate.Core**, which targets `netstandard2.0` as well as `net9.0` so it can be reused from
+.NET Framework 4.6.1+, Mono, Unity and Xamarin. The WPF app holds the parts that are Windows-bound
+by nature: WASAPI capture/render, COM device switching, and the UI.
+
 ```
-src/VoiceGate/
-├── Audio/
-│   ├── AudioEngine.cs          the real-time pipeline; start here
-│   └── EnrollmentRecorder.cs   mic -> 16 kHz buffer for enrollment
+src/VoiceGate.Core/             netstandard2.0 + net9.0 - no Windows APIs
 ├── Dsp/
 │   ├── IDenoiser.cs            denoiser abstraction (Bypass = zero-latency identity)
 │   ├── RnNoiseDenoiser.cs      native RNNoise
@@ -165,11 +167,25 @@ src/VoiceGate/
 │   ├── SpeakerVerifier.cs      embeddings + cosine similarity
 │   ├── VoiceProfile.cs         the stored voiceprint
 │   └── EnrollmentProcessor.cs  recording -> voiceprint + suggested threshold
-├── Devices/                    endpoint enumeration, VB-Cable detection, default-device switching
 ├── Models/                     model registry (URLs, exact sizes) + downloader
+└── Compat/IsExternalInit.cs    netstandard2.0 polyfill so records/init compile
+
+src/VoiceGate/                  net9.0-windows WPF app
+├── Audio/
+│   ├── AudioEngine.cs          the real-time pipeline; start here
+│   └── EnrollmentRecorder.cs   mic -> 16 kHz buffer for enrollment
+├── Devices/                    endpoint enumeration, VB-Cable detection, default-device switching
 ├── Config/                     persisted settings
 └── *.xaml(.cs)                 WPF UI: main window, enrollment wizard, download dialog
 ```
+
+### Writing code that compiles for both targets
+
+`VoiceGate.Core` shares one source set across `netstandard2.0` and `net9.0`, so it sticks to APIs
+both have: `Math.Max` over `MathF.Max`, three-argument `Array.Clear`, `Span.Slice(n)` over the `[n..]`
+range operator, plain `using` over `await using`, and the array-based `Stream.ReadAsync` overloads.
+The net9.0 analyzers flag several of these and are suppressed in the project file, with the reason
+recorded there. The alternative (an `#if` for every one) buys nothing here.
 
 ## Design decisions worth knowing
 

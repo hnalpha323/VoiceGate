@@ -49,6 +49,12 @@ House rules beyond what the analyzer enforces:
   instead. Load-bearing constants such as `RejectMargin` and `SimFreshMs` do deserve a why.
 - **Cross-thread state is `volatile` or lock-guarded, explicitly.** If you add a field that the audio
   thread and the UI thread both touch, say so at the declaration.
+- **`VoiceGate.Core` must keep compiling for .NET Standard 2.0.** It targets `netstandard2.0` as well
+  as `net9.0` from one source set, so it avoids APIs that only the modern BCL has: use `Math.Max`
+  rather than `MathF.Max`, three-argument `Array.Clear`, `Span.Slice(n)` rather than `[n..]`, plain
+  `using` rather than `await using`, and the array-based `Stream.ReadAsync` overloads. `dotnet build`
+  compiles both targets and will tell you immediately. Anything Windows-only (WASAPI, COM, WPF)
+  belongs in the app project, not the core.
 
 ## Testing
 

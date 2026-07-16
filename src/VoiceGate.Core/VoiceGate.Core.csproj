@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--
+      netstandard2.0 keeps the core reusable from .NET Framework 4.6.1+, Mono, Unity and
+      Xamarin. net9.0 lets the WPF app and modern consumers use the current BCL directly,
+      without the polyfills under Compat/.
+    -->
+    <TargetFrameworks>netstandard2.0;net9.0</TargetFrameworks>
+    <AssemblyName>VoiceGate.Core</AssemblyName>
+    <RootNamespace>VoiceGate</RootNamespace>
+    <Version>1.0.0</Version>
+    <Description>Platform-agnostic voice-isolation core: DSP, Silero VAD, and CAM++ speaker verification.</Description>
+    <!--
+      These analyzers fire only on the net9.0 pass and push toward APIs that netstandard2.0
+      does not have (ThrowIfNegativeOrZero, ObjectDisposedException.ThrowIf, the Memory-based
+      Stream overloads, and ReadAsStreamAsync(CancellationToken)). The shared source has to
+      compile for both targets, so the older forms stay. Cancellation is still honoured: the
+      token is passed to every read and write in the download loop.
+    -->
+    <NoWarn>$(NoWarn);CA1512;CA1513;CA1835;CA2016</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- NAudio.Core only: WaveFormat and the WDL resampler are portable, unlike NAudio's WASAPI bits. -->
+    <PackageReference Include="NAudio.Core" Version="2.3.0" />
+    <PackageReference Include="org.k2fsa.sherpa.onnx" Version="1.13.4" />
+    <PackageReference Include="YellowDogMan.RRNoise.NET" Version="0.1.9" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <!-- Span<T>/MemoryMarshal and System.Text.Json are in-box from net9.0 onward. -->
+    <PackageReference Include="System.Memory" Version="4.6.3" />
+    <PackageReference Include="System.Text.Json" Version="9.0.18" />
+  </ItemGroup>
+
+</Project>

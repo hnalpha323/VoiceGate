@@ -83,7 +83,7 @@ public sealed class SileroVad : IDisposable
         {
             int n = Math.Min(WindowSize, samples16k.Length - pos);
             if (n < WindowSize)
-                Array.Clear(chunk);
+                Array.Clear(chunk, 0, chunk.Length);
             Array.Copy(samples16k, pos, chunk, 0, n);
             vad.AcceptWaveform(chunk);
             pos += n;

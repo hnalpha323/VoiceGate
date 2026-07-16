@@ -12,7 +12,8 @@ public sealed class FloatRingBuffer
 
     public FloatRingBuffer(int capacity)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
+        if (capacity <= 0)
+            throw new ArgumentOutOfRangeException(nameof(capacity));
         _buffer = new float[capacity];
     }
 

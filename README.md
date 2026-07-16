@@ -234,6 +234,33 @@ the native binaries, comes from NuGet.
 The models are not stored in the repo. They're downloaded at runtime into
 `%APPDATA%\VoiceGate\models`, either by the in-app button or by `./setup-models.ps1`.
 
+### Reusing the core (.NET Standard 2.0)
+
+VoiceGate itself is a WPF app, so the executable is Windows-only by nature. The interesting half
+isn't: `src/VoiceGate.Core` targets **.NET Standard 2.0** as well as .NET 9, so the DSP, Silero VAD,
+speaker verification, and model management can be referenced from .NET Framework 4.6.1+, Mono, Unity,
+Xamarin, or a cross-platform .NET app.
+
+```xml
+<ProjectReference Include="path/to/src/VoiceGate.Core/VoiceGate.Core.csproj" />
+```
+
+```csharp
+using VoiceGate.Dsp;
+using VoiceGate.Speech;
+
+IDenoiser denoiser = new SpectralDenoiser { ReductionDb = 18f };
+denoiser.Process(frame);                    // 48 kHz mono float, in place
+
+using var verifier = new SpeakerVerifier("speaker.onnx");
+float[] me = verifier.ComputeEmbedding(enrollmentSamples16k);
+float score = SpeakerVerifier.Cosine(me, verifier.ComputeEmbedding(liveSamples16k));
+```
+
+Audio I/O is deliberately not in the core: `AudioEngine` and the device plumbing are WASAPI-bound and
+stay in the Windows app, so bring your own capture on other platforms. The underlying sherpa-onnx and
+RNNoise packages ship native binaries for Linux and macOS as well as Windows.
+
 ## Contributing
 
 Contributions are welcome, especially real-world tuning feedback, device compatibility reports, and

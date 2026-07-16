@@ -37,7 +37,7 @@ public sealed class RnNoiseDenoiser : IDenoiser
         _denoiser.Denoise(wet, finish: false);
 
         // Map 6..40 dB to a 0.35..1.0 wet mix (full RNNoise at >= 30 dB).
-        float mix = Math.Clamp(ReductionDb / 30f, 0.35f, 1f);
+        float mix = Math.Min(1f, Math.Max(0.35f, ReductionDb / 30f));
         float dry = 1f - mix;
         for (int i = 0; i < frame.Length; i++)
             frame[i] = mix * wet[i] + dry * frame[i];

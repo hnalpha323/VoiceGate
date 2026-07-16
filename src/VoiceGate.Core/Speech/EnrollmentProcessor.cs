@@ -49,7 +49,7 @@ public static class EnrollmentProcessor
 
         float selfSim = sims.Count > 0 ? sims.Average() : 0f;
         // Gate threshold sits well below typical self-similarity but above impostor range.
-        float suggested = Math.Clamp(selfSim - 0.18f, 0.22f, 0.55f);
+        float suggested = Math.Min(0.55f, Math.Max(0.22f, selfSim - 0.18f));
 
         string? warning = null;
         if (selfSim < 0.45f)
